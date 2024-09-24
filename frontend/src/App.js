@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import CreateUserModal from "./components/CreateUser";
 
 function App() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false); // Modal state
+
 
   // Fetch users from API
   const fetchUsers = async () => {
@@ -28,6 +31,11 @@ function App() {
     fetchUsers();
   }, []);
 
+  // Handle new user creation
+  const handleUserCreated = (newUser) => {
+    setUsers((prevUsers) => [...prevUsers, newUser]);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">User Management</h1>
@@ -44,7 +52,10 @@ function App() {
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
-        <button className="bg-blue-500 text-white p-2 rounded-md">
+        <button
+          className="bg-blue-500 text-white p-2 rounded-md"
+          onClick={() => setIsCreateUserModalOpen(true)} // Open modal on button click
+        >
           Create New User
         </button>
       </div>
@@ -86,6 +97,13 @@ function App() {
           </tbody>
         </table>
       )}
+
+      {/* Create New User Modal */}
+      <CreateUserModal
+        isOpen={isCreateUserModalOpen}
+        onClose={() => setIsCreateUserModalOpen(false)}
+        onUserCreated={handleUserCreated}
+      />
     </div>
   );
 }
