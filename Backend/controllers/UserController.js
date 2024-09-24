@@ -21,6 +21,17 @@ export const getUsers = async (req, res) => {
     }
 }
 
+export const getUserbyName = async (req, res) => {
+    try {
+        
+        const user = await User.find({ name: { $regex: new RegExp(req.params.name, 'i') } });
+        res.json(user);
+    } catch (error) {
+        res.status(404).json({message: error.message});
+    }
+}
+
+
 export const getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
