@@ -36,6 +36,23 @@ function App() {
     setUsers((prevUsers) => [...prevUsers, newUser]);
   };
 
+  // Handle deleting a user
+  const handleDeleteUser = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return;
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete user");
+      }
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">User Management</h1>
@@ -88,7 +105,7 @@ function App() {
                   <button className="bg-yellow-500 text-white p-1 rounded-md mr-2">
                     Edit
                   </button>
-                  <button className="bg-red-500 text-white p-1 rounded-md">
+                  <button onClick={() => handleDeleteUser(user._id)} className="bg-red-500 text-white p-1 rounded-md">
                     Delete
                   </button>
                 </td>
