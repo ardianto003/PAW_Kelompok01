@@ -2,7 +2,19 @@ import User from "../models/UserModel.js";
 
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const filter = {};
+        const sort = {};
+
+        if (req.query.name) filter.name = req.query.name;
+        if (req.query.gender) filter.gender = req.query.gender;
+
+        if (req.query.sort) {
+            const sortField = req.query.sort.startsWith('-') ? req.query.sort.substring(1) : req.query.sort;
+            const sortOrder = req.query.sort.startsWith('-') ? -1 : 1;
+            sort[sortField] = sortOrder;
+        }
+
+        const users = await User.find(filter).sort(sort);
         res.json(users);
     } catch (error) {
         res.status(500).json({message: error.message});
