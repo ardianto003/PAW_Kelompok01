@@ -5,7 +5,11 @@ export const getUsers = async (req, res) => {
         const filter = {};
         const sort = {};
 
-        if (req.query.name) filter.name = req.query.name;
+        // Use a regular expression for partial matching
+        if (req.query.name) {
+            const nameRegex = new RegExp(req.query.name, 'i'); // 'i' makes it case-insensitive
+            filter.name = { $regex: nameRegex };
+        }
         if (req.query.gender) filter.gender = req.query.gender;
 
         if (req.query.sort) {
@@ -17,7 +21,7 @@ export const getUsers = async (req, res) => {
         const users = await User.find(filter).sort(sort);
         res.json(users);
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 }
 
